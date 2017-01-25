@@ -625,7 +625,8 @@ public class ExcelWorksheetBuilder {
         formatString = ((DataCell) rowsetBody[x][y]).getFormatString();
         if ((formatString != null) && (formatString.trim().length() > 0)) {
 
-            String formatKey = "" + formatString;
+            // We should have a different format key for each cell, due to conditional formatting
+            String formatKey = "[" + x + "," + y + "]" + formatString;
             if (!cellStyles.containsKey(formatKey)) {
                 // Inherit formatting from cube schema FORMAT_STRING
                 CellStyle numberCSClone = excelWorkbook.createCellStyle();
