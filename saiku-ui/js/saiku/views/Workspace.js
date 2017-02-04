@@ -341,10 +341,9 @@ var Workspace = Backbone.View.extend({
             .delay(300)
             .animate({ backgroundColor: '#fff' }, 'slow');*/
     },
-   setDefaultFilters: function(filters, query){
 
-        _.each(filters, function(f){
-
+    setDefaultFilters: function(filters, query) {
+        _.each(filters, function(f) {
             var n = f.filtername;
 
             var hierarchy = n.substring(0, n.lastIndexOf("[")-1);
@@ -352,9 +351,20 @@ var Workspace = Backbone.View.extend({
 
             query.helper.setDefaultFilter(hierarchy, level, f.filtervalue)
         });
-
-
     },
+
+    setDefaultMdxFilters: function(filters, query) {
+        _.each(filters, function(filter) {
+            var axis = query.helper.getAxis(filter.axis);
+            axis.filters.push({
+                flavour : 'Generic',
+                operator: null,
+                function : 'Filter',
+                expressions: [filter.value]
+            });
+        });
+    },
+
     data_connections: function(paramsURI) {
         var connections = Saiku.session.sessionworkspace.connections,
             self = this;
@@ -426,8 +436,9 @@ var Workspace = Backbone.View.extend({
         obj.query = this.query;
 
         var p = Saiku.URLParams.paramsURI();
-        var deffilters = this.extractDefaultFilters(p);
-        this.setDefaultFilters(deffilters, obj.query);
+
+        this.setDefaultFilters(this.extractDefaultFilters(p), obj.query);
+        this.setDefaultMdxFilters(this.extractDefaultMdxFilters(p), obj.query);
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
@@ -435,12 +446,12 @@ var Workspace = Backbone.View.extend({
 
     },
 
-    extractDefaultFilters: function(p){
-        var defaultfilters=[];
+    extractDefaultFilters: function(p) {
+        var defaultfilters = [];
         var filtername;
         var filtervalue;
 
-        for (var i in p){
+        for (var i in p) {
             if (i.indexOf("default_filter_") > -1) {
                 var j = i.replace("default_filter_", "");
                 filtername = j;
@@ -451,6 +462,23 @@ var Workspace = Backbone.View.extend({
         }
 
         return defaultfilters;
+    },
+
+    extractDefaultMdxFilters: function(parameters) {
+        var defaultMdxFilters = [];
+
+        for (var key in parameters) {
+            if (key.indexOf("default_mdx_filter_") > -1) {
+                var axis = key.replace("default_mdx_filter_", "");
+
+                defaultMdxFilters.push({
+                    axis: axis,
+                    value: parameters[key]
+                });
+            }
+        }
+
+        return defaultMdxFilters;
     },
 
     new_query: function() {
@@ -531,11 +559,14 @@ var Workspace = Backbone.View.extend({
         }
 
         if (this.query.model.type == "MDX") {
-                this.query.setProperty("saiku.olap.result.formatter", "flat");
+            this.query.setProperty("saiku.olap.result.formatter", "flat");
+
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }
+
             $(this.el).find('.workspace_fields').addClass('hide');
+
             this.toolbar.switch_to_mdx();
         } else {
             $(this.el).find('.workspace_editor').removeClass('hide').show();
