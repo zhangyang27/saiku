@@ -425,9 +425,9 @@ var Workspace = Backbone.View.extend({
 
         obj.query = this.query;
 
-        var p = this.paramsURI;
-        //var deffilters = this.extractDefaultFilters(p);
-        //this.setDefaultFilters(deffilters, obj.query);
+        var p = Saiku.URLParams.paramsURI();
+        var deffilters = this.extractDefaultFilters(p);
+        this.setDefaultFilters(deffilters, obj.query);
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
@@ -439,8 +439,9 @@ var Workspace = Backbone.View.extend({
         var defaultfilters=[];
         var filtername;
         var filtervalue;
-        for(var i in p){
-            if(i.indexOf("default_filter_")>-1){
+
+        for (var i in p){
+            if (i.indexOf("default_filter_") > -1) {
                 var j = i.replace("default_filter_", "");
                 filtername = j;
                 filtervalue = p[i];
@@ -448,8 +449,8 @@ var Workspace = Backbone.View.extend({
             }
 
         }
-        return defaultfilters;
 
+        return defaultfilters;
     },
 
     new_query: function() {
