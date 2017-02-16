@@ -525,7 +525,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         }
         rowContent += "</tr>";
 
-        if (options.hideEmpty && header.type === "DATA_CELL" && rowWithOnlyEmptyCells) {
+        // Change it to let hideEmpty true by default
+        if (/*options.hideEmpty &&*/ header.type === "DATA_CELL" && rowWithOnlyEmptyCells) {
             rowContent = '';
         }
 
