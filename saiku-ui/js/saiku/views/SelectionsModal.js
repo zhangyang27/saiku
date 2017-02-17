@@ -660,6 +660,13 @@ var SelectionsModal = Modal.extend({
                     }
                 }
 
+                // Removing totals/subtotals with 'nil' value
+                for (var i = totalsArray.length - 1; i >= 0; i--) {
+                    if (totalsArray[i] === 'nil') {
+                        totalsArray.splice(i, 1);
+                    }
+                }
+
                 hierarchy.levels[lName]["aggregators"] = totalsArray;
 
                 var selectionType = $(self.el).find('input.selection_type:checked').val();
