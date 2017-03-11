@@ -1,5 +1,5 @@
 {
-  "Username": "用户名",
+  "Username": "用户名 hi from zhangyang27",
   "Password": "密码",
   "Help": "帮助",
   "Admin Console": "管理控制台",
@@ -27,7 +27,7 @@
   "Rows": "行",
   "Filter": "过滤",
   "Columns": "列",
-  "Loading...": "加载...",
+  "Loading...": "加载...hi from zhangyang27",
   "Loading datasources....": "加载数据...",
   "Unsaved query": "尚未保存",
   "Export": "导出",
